@@ -1,0 +1,29 @@
+name: Build exp.so
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install deps
+        run: sudo apt-get install -y gcc make
+      
+      - name: Build
+        run: make
+      
+      - name: Verify
+        run: |
+          file exp.so
+          nm -D exp.so | grep -E "RedisModule_OnLoad|RedisModule_Init"
+      
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exp.so
+          path: exp.so
